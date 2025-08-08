@@ -1,0 +1,11 @@
+<div>
+        <br>
+        <a href="/sign-up">Sign up</a>
+        &nbsp;
+        <% if (!locals.currentUser) {%>
+                <a href="/log-in">Login</a>
+        <% } else { %>
+                <a href="/log-out">Logout</a>
+        <%}%>
+        </br>
+</div>

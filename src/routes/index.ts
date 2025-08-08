@@ -11,6 +11,7 @@ const router = Router();
 router.get('/', async (req, res) => {
   const prisma = new PrismaClient();
   console.log(await prisma.user.findMany());
+  console.log(req.user);
   res.render('index', {});
 });
 
@@ -18,6 +19,7 @@ router.get('/log-in', (req, res) => res.render('log-in', {}));
 
 router.get('/sign-up', (req, res) => res.render('sign-up', {}));
 
+router.get('/log-out', authController.logout);
 /**
  * ------------------ POST ROUTES ------------------------
  */

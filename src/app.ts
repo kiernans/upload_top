@@ -30,6 +30,7 @@ app.use(
     }),
   }),
 );
+app.use(passport.session());
 
 // Added to avoid having to pass req.user into each controller/view
 // Puts into currentUser local variable

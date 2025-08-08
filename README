@@ -1,0 +1,5 @@
+# Template for Express app with Typescript, ESLint and Prettier configured
+
+## Run following commands for installations
+npm i express dotenv ejs
+npm i --save-dev @eslint/js @types/express @types/node eslint eslint-config-prettier eslint-plugin-prettier globals prettier  typescript-eslint

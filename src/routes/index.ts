@@ -24,6 +24,11 @@ router.get('/sign-up', (req, res) => res.render('sign-up', {}));
 router.get('/log-out', authController.logout);
 
 router.get('/upload', (req, res) => res.render('upload'));
+
+router.get('/files', (req, res) =>
+  res.render('files', { title: 'Files', content: [] }),
+);
+
 /**
  * ------------------ POST ROUTES ------------------------
  */

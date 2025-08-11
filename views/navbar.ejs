@@ -1,14 +1,40 @@
 <div>
         <br>
-        <a href="/sign-up">Sign up</a>
         &nbsp;
-        <% if (!locals.currentUser) {%>
-                <a href="/log-in">Login</a>
-        <% } else { %>
-                <a href="/log-out">Logout</a>
+        
+        <!-- Not Files route -->
+        <% if (!locals.files) {%>
+                
+                <!-- Logged in -->
+                <% if (!locals.currentUser) {%>
+                        <a href="/sign-up">Sign up</a>
+                        
+                        &nbsp;
+
+                        <a href="/log-in">Login</a>
+                
+                <!-- Logged out -->
+                <% } else { %>
+                        <a href="/log-out">Logout</a>
+                        &nbsp;
+
+                        <a href="/files">Files</a>
+                <%}%>
+
+        <!-- Files route -->
+        <%} else {%>
+                <a href="/">Home</a>
+                
                 &nbsp;
 
-                <a href="/upload">Upload</a>
+                <a href="/upload">Upload file</a>
+                
+                &nbsp;
+
+                <a href="/create">Create Folder</a>
+                
+                &nbsp;
+        
         <%}%>
         </br>
 </div>

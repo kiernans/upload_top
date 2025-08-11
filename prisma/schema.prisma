@@ -29,3 +29,23 @@ model User {
   password  String
 }
 
+model FileSystemItem {
+  id          String      @id 
+  name        String
+  type        ItemType
+  parentId    String?
+  parent      FileSystemItem?  @relation("FolderContents", fields: [parentId], references: [id])
+  children    FileSystemItem[] @relation("FolderContents")
+  uploadTime  DateTime @default(now())
+
+  //For Files
+  mimeType    String?
+  size        Int?
+  url         String
+}
+
+enum ItemType {
+  FILE
+  FOLDER
+}
+

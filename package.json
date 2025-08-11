@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npx ts-node-dev --respawn --transpile-only src/app.ts"
+    "dev": "npx ts-node-dev --respawn -r tsconfig-paths/register --transpile-only src/app.ts"
   },
   "keywords": [],
   "author": "",
@@ -38,6 +38,7 @@
     "express-validator": "^7.2.1",
     "multer": "^2.0.2",
     "passport": "^0.7.0",
-    "passport-local": "^1.0.0"
+    "passport-local": "^1.0.0",
+    "tsconfig-paths": "^4.2.0"
   }
 }

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { PrismaClient } from '../../generated/prisma/client';
+import { prisma } from '@lib/prisma';
 import signupController from '../controllers/signupController';
 import authController from '../controllers/authController';
 import uploadController from '../controllers/uploadController';
@@ -10,8 +10,9 @@ const router = Router();
  * ------------------ GET ROUTES ------------------------
  */
 router.get('/', async (req, res) => {
-  const prisma = new PrismaClient();
+  console.log('All users:');
   console.log(await prisma.user.findMany());
+  console.log('User:');
   console.log(req.user);
   res.render('index', {});
 });

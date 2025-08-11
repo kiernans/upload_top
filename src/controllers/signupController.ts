@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { body, validationResult, Meta, matchedData } from 'express-validator';
 import bcrypt from 'bcryptjs';
-import { PrismaClient } from '../../generated/prisma/client';
+import { prisma } from '@lib/prisma';
 // import db from '../db/query';
 
 // The Custom validator uses value and Meta objects as inputs
@@ -62,7 +62,6 @@ const createUser = [
       const hashedPassword = await bcrypt.hash(password, 10);
       const newUser = { name, email, password: hashedPassword };
 
-      const prisma = new PrismaClient();
       await prisma.user.create({
         data: newUser,
       });

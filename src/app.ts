@@ -1,8 +1,9 @@
 import path from 'node:path';
+import dotenv from 'dotenv';
 import express, { Express, Request, Response, NextFunction } from 'express';
 import expressSession from 'express-session';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
-import { PrismaClient } from '../generated/prisma/client';
+import { prisma as PrismaClient } from '@lib/prisma';
 import { Strategy as LocalStrategy } from 'passport-local';
 import authController from './controllers/authController';
 import passport from 'passport';
@@ -10,6 +11,10 @@ import router from './routes';
 
 // Standard setup with Express and EJS
 const app: Express = express();
+
+// Load from .env
+dotenv.config();
+
 // Assumes files are in src folder and views is one level up
 app.set('views', path.join(__dirname, '../views'));
 app.set('view engine', 'ejs');
@@ -23,7 +28,7 @@ app.use(
     secret: 'a santa at nasa',
     resave: true,
     saveUninitialized: true,
-    store: new PrismaSessionStore(new PrismaClient(), {
+    store: new PrismaSessionStore(PrismaClient, {
       checkPeriod: 2 * 60 * 1000, //ms
       dbRecordIdIsSessionId: true,
       dbRecordIdFunction: undefined,

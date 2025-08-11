@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import { VerifyFunction } from 'passport-local';
 import passport, { DoneCallback } from 'passport';
 import { Request, Response, NextFunction } from 'express';
-import { PrismaClient } from '../../generated/prisma';
+import { prisma } from '@lib/prisma';
 
 interface User extends Express.User {
   id: string;
@@ -15,7 +15,6 @@ interface User extends Express.User {
 // Which will be used in the log-in POST route (the login function below)
 const verifyFunction: VerifyFunction = async (username, password, done) => {
   try {
-    const prisma = new PrismaClient();
     const user = await prisma.user.findUnique({
       where: {
         email: username,
@@ -44,7 +43,6 @@ const serializeUser = (user: Express.User, done: DoneCallback) => {
 
 const deserializeUser = async (id: string, done: DoneCallback) => {
   try {
-    const prisma = new PrismaClient();
     // Looks up user using the ID that's stored in the connect.sid cookie
     const user = await prisma.user.findUnique({
       where: {

@@ -3,17 +3,23 @@
 
 <head>
     <meta charset="UTF-8">
-    <title><%= title%></title>
+    <title><%= title %></title>
 </head>
 
 <body>
-    <%- include('navbar', {files: true}) %>
-    <h1><%= title%></h1>
+    <%- include('navbar', { files: true }) %>
     <div>
-        <% if (content) {%>
-            <%content.forEach((item) => { %>
-                <a href=<%= item.link%>><%=item.name%></a>
-            <%})}%>
+        <br />
+        <% if (children) { %>
+            <% children.forEach((child) => { 
+                let link = `/files/${child.id}/`;
+                if (child.type === 'FOLDER') {
+                    link = `/files/${child.id}/children`;
+                }
+            %>
+                <a href="<%= link %>"><%= child.name %></a><br/>
+            <% }) %>
+        <% } %>
     </div>
 </body>
 

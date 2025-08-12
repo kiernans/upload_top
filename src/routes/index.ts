@@ -54,7 +54,8 @@ router.post('/log-in', authController.login);
 router.post('/sign-up', signupController.createUser);
 
 // File Actions
-router.post('/files/:id/upload', fileController.uploadFile);
 router.post('/files/:id/create', fileController.createFolder);
+router.post('/files/:id/upload', fileController.uploadFile);
+router.post('/files/:id/delete', fileController.deleteItem);
 
 export default router;

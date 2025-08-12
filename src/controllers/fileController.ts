@@ -3,6 +3,7 @@ import { prisma } from '@lib/prisma';
 import multer from 'multer';
 import fs from 'fs';
 import path from 'path';
+import type { FileSystemItem } from '../../generated/prisma';
 
 /**
  * ------------------ FILE FUNCTIONS ------------------------
@@ -71,6 +72,16 @@ async function getAllFiles(req: Request, res: Response) {
 
   console.log(files);
   res.redirect('/files');
+}
+
+async function deleteFile(file: FileSystemItem) {
+  const filePath = path.join(storagePath, file.name);
+  fs.unlink(filePath, (err) => {
+    if (err) {
+      console.error(err);
+      throw new Error(`Failed to delete ${file.name}`);
+    }
+  });
 }
 
 /**
@@ -203,6 +214,30 @@ async function createFolder(req: Request, res: Response, next: NextFunction) {
   }
 }
 
+async function deleteItem(req: Request, res: Response, next: NextFunction) {
+  const userId = res.locals.currentUser.id;
+  const { id: itemId } = req.params;
+
+  try {
+    const deleted = await prisma.fileSystemItem.delete({
+      where: {
+        id: itemId,
+        ownerId: userId,
+      },
+    });
+
+    if (deleted.type === 'FILE') {
+      deleteFile(deleted);
+    }
+
+    console.log(`${deleted.name} deleted.`);
+    res.redirect('/files');
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+}
+
 export default {
   uploadFile,
   getAllFiles,
@@ -211,4 +246,5 @@ export default {
   getChildren,
   getCreateFolderPage,
   createFolder,
+  deleteItem,
 };

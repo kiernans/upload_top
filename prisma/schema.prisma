@@ -39,8 +39,8 @@ model FileSystemItem {
   parent      FileSystemItem?  @relation("FolderContents", fields: [parentId], references: [id])
   children    FileSystemItem[] @relation("FolderContents")
   uploadTime  DateTime @default(now())
-  owner       User? @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  ownerId Int?
+  owner       User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId Int
 
   //For Files
   mimeType    String?

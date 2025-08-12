@@ -10,6 +10,10 @@
     <%- include('navbar', { files: true }) %>
     <div>
         <br />
+        <% if (currentFolder.parentId) { %>
+            <a href="/files/<%= currentFolder.parentId %>/children">../</a>
+            &nbsp;
+        <% } %>
         <% if (children) { %>
             <% children.forEach((child) => { 
                 let link = `/files/${child.id}/`;
@@ -17,7 +21,8 @@
                     link = `/files/${child.id}/children`;
                 }
             %>
-                <a href="<%= link %>"><%= child.name %></a><br/>
+                <a href="<%= link %>"><%= child.name %></a> &nbsp;
+
             <% }) %>
         <% } %>
     </div>

@@ -7,11 +7,27 @@ async function getFSItems() {
 
 async function getRootFolder(req: Request, res: Response, next: NextFunction) {
   try {
-    const root = await prisma.fileSystemItem.findFirst({
+    const ownerId = res.locals.currentUser.id;
+    let root = await prisma.fileSystemItem.findFirst({
       where: {
         name: '/',
+        ownerId: ownerId,
       },
     });
+
+    // Create root folder if does not exist
+    if (!root) {
+      root = await prisma.fileSystemItem.create({
+        data: {
+          name: '/',
+          type: 'FOLDER',
+          ownerId: ownerId,
+        },
+      });
+
+      console.log('Creating root folder');
+    }
+
     res.redirect(`/files/${root.id}/children`);
   } catch (error) {
     console.error(error);
@@ -24,7 +40,7 @@ async function getChildren(req: Request, res: Response, next: NextFunction) {
   const ownerId = res.locals.currentUser.id;
 
   try {
-    const parent = await prisma.fileSystemItem.findFirst({
+    const currentFolder = await prisma.fileSystemItem.findFirst({
       where: {
         id: id,
         ownerId: ownerId,
@@ -38,7 +54,11 @@ async function getChildren(req: Request, res: Response, next: NextFunction) {
       },
     });
 
-    res.render('files', { title: 'Files', children: children, folder: parent });
+    res.render('files', {
+      title: 'Files',
+      children: children,
+      currentFolder: currentFolder,
+    });
   } catch (error) {
     console.error(error);
     next(error);

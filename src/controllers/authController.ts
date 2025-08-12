@@ -114,6 +114,31 @@ function checkLogin(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
+async function checkFileOwnership(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  const userId = res.locals.currentUser.id;
+  const { id: fileId } = req.params;
+  try {
+    const { ownerId } = await prisma.fileSystemItem.findUnique({
+      where: { id: fileId },
+      select: {
+        ownerId: true,
+      },
+    });
+
+    if (!ownerId || ownerId !== userId) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+    next();
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+}
+
 export default {
   login,
   verifyFunction,
@@ -122,4 +147,5 @@ export default {
   logout,
   checkAdmin,
   checkLogin,
+  checkFileOwnership,
 };

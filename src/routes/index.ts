@@ -10,6 +10,7 @@ const router = Router();
  * Require login for all /files routes
  */
 router.use('/files', authController.checkLogin);
+router.use('/files/:id', authController.checkFileOwnership);
 
 /**
  * ------------------ GET ROUTES ------------------------

@@ -31,7 +31,6 @@ const upload = multer({
 });
 
 const addFileToDb = async (req: Request, res: Response, next: NextFunction) => {
-  console.log(req.file, req.body);
   const { id: currentFolderId } = req.params;
   const ownerId = res.locals.currentUser.id;
   try {
@@ -41,7 +40,7 @@ const addFileToDb = async (req: Request, res: Response, next: NextFunction) => {
           name: req.file.filename,
           type: 'FILE',
           parentId: currentFolderId,
-          ownerId: ownerId,
+          ownerId,
           mimeType: req.file.mimetype,
           size: req.file.size,
           url: storagePath,
@@ -103,7 +102,7 @@ async function getRootFolder(req: Request, res: Response, next: NextFunction) {
     let root = await prisma.fileSystemItem.findFirst({
       where: {
         name: '/',
-        ownerId: ownerId,
+        ownerId,
       },
     });
 
@@ -113,7 +112,7 @@ async function getRootFolder(req: Request, res: Response, next: NextFunction) {
         data: {
           name: '/',
           type: 'FOLDER',
-          ownerId: ownerId,
+          ownerId,
         },
       });
 
@@ -134,22 +133,22 @@ async function getChildren(req: Request, res: Response, next: NextFunction) {
   try {
     const currentFolder = await prisma.fileSystemItem.findFirst({
       where: {
-        id: id,
-        ownerId: ownerId,
+        id,
+        ownerId,
       },
     });
 
     const children = await prisma.fileSystemItem.findMany({
       where: {
         parentId: id,
-        ownerId: ownerId,
+        ownerId,
       },
     });
 
     res.render('files', {
       title: 'Files',
-      children: children,
-      currentFolder: currentFolder,
+      children,
+      currentFolder,
     });
   } catch (error) {
     console.error(error);
@@ -169,7 +168,7 @@ async function getCreateFolderPage(
     const folder = await prisma.fileSystemItem.findFirst({
       where: {
         id: id,
-        ownerId: ownerId,
+        ownerId,
       },
     });
 
@@ -191,7 +190,7 @@ async function createFolder(req: Request, res: Response, next: NextFunction) {
         name: folderName,
         type: 'FOLDER',
         parentId: id,
-        ownerId: ownerId,
+        ownerId,
       },
     });
 

@@ -109,7 +109,7 @@ function checkAdmin(req: Request, res: Response, next: NextFunction) {
 
 function checkLogin(req: Request, res: Response, next: NextFunction) {
   if (!req.user) {
-    return res.status(401).json({ message: 'Must be logged in' });
+    return res.status(401).json({ message: 'Unauthorized' });
   }
   next();
 }

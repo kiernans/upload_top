@@ -14,46 +14,46 @@ router.use('/files', authController.checkLogin);
 /**
  * ------------------ GET ROUTES ------------------------
  */
-router.get('/', async (req, res) => {
+
+// Home
+router.get('/', (req, res) => {
   res.render('index', {});
 });
 
+// Authentication routes
 router.get('/log-in', (req, res) => res.render('log-in', {}));
-
 router.get('/sign-up', (req, res) => res.render('sign-up', {}));
-
 router.get('/log-out', authController.logout);
 
-// This route creates root folder if it does not exist
-// Otherwise it redirects to /files/:id/children
+// Root folder route (creates if missing, otherwise redirects to children)
 router.get('/files', fileController.getRootFolder);
 
+// Development-only route: list all files
 if (process.env.NODE_ENV === 'development') {
-  router.get('/files/all/', fileController.getAllFiles);
+  // Debug route: returns all files (dangerous for production)
+  router.get('/files/all', fileController.getAllFiles);
 }
 
-router.get('/files/:id/', fileController.getFileSystemMetadata);
-
-// Form for creating subfolder
+// File system routes (keep specific before catch-all)
 router.get('/files/:id/create', fileController.getCreateFolderPage);
-
 router.get('/files/:id/upload', (req, res) => {
   const { id: currentFolderId } = req.params;
-  res.render('upload', { currentFolderId: currentFolderId });
+  res.render('upload', { currentFolderId });
 });
-
 // Gets all subfolders/files in a folder
 router.get('/files/:id/children', fileController.getChildren);
+router.get('/files/:id', fileController.getFileSystemMetadata);
 
 /**
  * ------------------ POST ROUTES ------------------------
  */
-router.post('/log-in', authController.login);
 
+// Auth Actions
+router.post('/log-in', authController.login);
 router.post('/sign-up', signupController.createUser);
 
+// File Actions
 router.post('/files/:id/upload', fileController.uploadFile);
-
 router.post('/files/:id/create', fileController.createFolder);
 
 export default router;

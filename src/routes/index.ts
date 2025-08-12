@@ -19,14 +19,18 @@ router.get('/sign-up', (req, res) => res.render('sign-up', {}));
 
 router.get('/log-out', authController.logout);
 
-router.get('/files/:id/upload', (req, res) => res.render('upload'));
-
+// This route creates root folder if it does not exist
+// Otherwise it redirects to /files/:id/children
 router.get('/files', fileController.getRootFolder);
 
 router.get('/files/:id/', fileController.getFSItems);
 
+// Form for creating subfolder
 router.get('/files/:id/create', fileController.getCreateFolderPage);
 
+router.get('/files/:id/upload', (req, res) => res.render('upload'));
+
+// Gets all subfolders/files in a folder
 router.get('/files/:id/children', fileController.getChildren);
 
 /**

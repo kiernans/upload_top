@@ -84,6 +84,27 @@ async function deleteFile(file: FileSystemItem) {
   });
 }
 
+async function downloadFile(req: Request, res: Response, next: NextFunction) {
+  const userId = res.locals.currentUser.id;
+  const { id: fileId } = req.params;
+  const file = await prisma.fileSystemItem.findFirst({
+    where: { id: fileId, ownerId: userId },
+  });
+
+  console.log(file);
+  if (file) {
+    if (file.url) {
+      const fileUrl = file.url;
+      const filePath = path.join(fileUrl, file.name);
+      res.download(filePath);
+    }
+  }
+
+  next(new Error('File was not found.'));
+
+  // res.redirect('/files');
+}
+
 /**
  * ------------------ FOLDER FUNCTIONS ------------------------
  */
@@ -99,8 +120,12 @@ async function getFileSystemMetadata(
     const file = await prisma.fileSystemItem.findFirst({
       where: { id: fileId, ownerId: userId },
     });
+    if (!file) throw new Error('File not found.');
     console.log(file);
-    res.redirect('/files');
+
+    next();
+
+    // res.redirect('/files');
   } catch (error) {
     console.error(error);
     next(error);
@@ -241,6 +266,7 @@ async function deleteItem(req: Request, res: Response, next: NextFunction) {
 export default {
   uploadFile,
   getAllFiles,
+  downloadFile,
   getFileSystemMetadata,
   getRootFolder,
   getChildren,

@@ -43,7 +43,11 @@ router.get('/files/:id/upload', (req, res) => {
 });
 // Gets all subfolders/files in a folder
 router.get('/files/:id/children', fileController.getChildren);
-router.get('/files/:id', fileController.getFileSystemMetadata);
+router.get(
+  '/files/:id',
+  fileController.getFileSystemMetadata,
+  fileController.downloadFile,
+);
 
 /**
  * ------------------ POST ROUTES ------------------------

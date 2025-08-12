@@ -8,7 +8,7 @@
 
 <body>
     <h1>Upload</h1>
-    <form action="/upload" method="POST" enctype="multipart/form-data">
+    <form action="/files/<%= currentFolderId %>/upload" method="POST" enctype="multipart/form-data">
         <input type="file" name="uploaded_file" />
         <input type="submit" value="Submit">
     </form>

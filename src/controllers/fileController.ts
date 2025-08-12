@@ -1,5 +1,82 @@
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '@lib/prisma';
+import multer from 'multer';
+import fs from 'fs';
+import path from 'path';
+
+/**
+ * ------------------ FILE FUNCTIONS ------------------------
+ */
+const storagePath = path.join(__dirname, '../../public/data/uploads/');
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    // Make sure destination exists before writing to it
+    if (!fs.existsSync(storagePath)) {
+      fs.mkdirSync(storagePath, { recursive: true });
+    }
+    cb(null, storagePath);
+  },
+  filename: (req, file, cb) => {
+    cb(
+      null,
+      file.fieldname + '-' + Date.now() + path.extname(file.originalname),
+    );
+  },
+});
+
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 1000000 },
+});
+
+const addFileToDb = async (req: Request, res: Response, next: NextFunction) => {
+  console.log(req.file, req.body);
+  const { id: currentFolderId } = req.params;
+  const ownerId = res.locals.currentUser.id;
+  try {
+    if (req.file) {
+      const newFile = await prisma.fileSystemItem.create({
+        data: {
+          name: req.file.filename,
+          type: 'FILE',
+          parentId: currentFolderId,
+          ownerId: ownerId,
+          mimeType: req.file.mimetype,
+          size: req.file.size,
+          url: storagePath,
+        },
+      });
+      console.log(`${newFile.name} was added!`);
+      console.log(newFile);
+    }
+  } catch (error) {
+    console.log('Did not add to DB');
+    console.error(error);
+    next(error);
+  }
+
+  res.redirect(`/files/${currentFolderId}/children`);
+};
+
+const uploadFile = [upload.single('uploaded_file'), addFileToDb];
+
+async function getAllFiles(req: Request, res: Response) {
+  const userId = res.locals.currentUser.id;
+  const files = await prisma.fileSystemItem.findMany({
+    where: {
+      type: 'FILE',
+      ownerId: userId,
+    },
+  });
+
+  console.log(files);
+  res.redirect('/files');
+}
+
+/**
+ * ------------------ FOLDER FUNCTIONS ------------------------
+ */
 
 async function getFSItems() {
   return await prisma.fileSystemItem.findMany();
@@ -113,6 +190,8 @@ async function createFolder(req: Request, res: Response, next: NextFunction) {
 }
 
 export default {
+  uploadFile,
+  getAllFiles,
   getFSItems,
   getRootFolder,
   getChildren,

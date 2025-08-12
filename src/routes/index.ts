@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import signupController from 'controllers/signupController';
 import authController from 'controllers/authController';
-import uploadController from 'controllers/uploadController';
 import fileController from 'controllers/fileController';
 
 const router = Router();
@@ -23,12 +22,19 @@ router.get('/log-out', authController.logout);
 // Otherwise it redirects to /files/:id/children
 router.get('/files', fileController.getRootFolder);
 
+if (process.env.NODE_ENV === 'development') {
+  router.get('/files/all/', fileController.getAllFiles);
+}
+
 router.get('/files/:id/', fileController.getFSItems);
 
 // Form for creating subfolder
 router.get('/files/:id/create', fileController.getCreateFolderPage);
 
-router.get('/files/:id/upload', (req, res) => res.render('upload'));
+router.get('/files/:id/upload', (req, res) => {
+  const { id: currentFolderId } = req.params;
+  res.render('upload', { currentFolderId: currentFolderId });
+});
 
 // Gets all subfolders/files in a folder
 router.get('/files/:id/children', fileController.getChildren);
@@ -40,7 +46,7 @@ router.post('/log-in', authController.login);
 
 router.post('/sign-up', signupController.createUser);
 
-router.post('/files/:id/upload', uploadController.uploadFile);
+router.post('/files/:id/upload', fileController.uploadFile);
 
 router.post('/files/:id/create', fileController.createFolder);
 

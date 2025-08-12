@@ -122,14 +122,19 @@ async function checkFileOwnership(
   const userId = res.locals.currentUser.id;
   const { id: fileId } = req.params;
   try {
-    const { ownerId } = await prisma.fileSystemItem.findUnique({
+    const item = await prisma.fileSystemItem.findUnique({
       where: { id: fileId },
       select: {
         ownerId: true,
       },
     });
 
-    if (!ownerId || ownerId !== userId) {
+    // Fixes Typescript possible record not found error
+    if (!item)
+      throw new Error('Record not found while checking file ownership.');
+    const { ownerId } = item;
+
+    if (ownerId !== userId) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
     next();

@@ -78,8 +78,23 @@ async function getAllFiles(req: Request, res: Response) {
  * ------------------ FOLDER FUNCTIONS ------------------------
  */
 
-async function getFSItems() {
-  return await prisma.fileSystemItem.findMany();
+async function getFileSystemMetadata(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const userId = res.locals.currentUser.id;
+    const { id: fileId } = req.params;
+    const file = await prisma.fileSystemItem.findFirst({
+      where: { id: fileId, ownerId: userId },
+    });
+    console.log(file);
+    res.redirect('/files');
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
 }
 
 async function getRootFolder(req: Request, res: Response, next: NextFunction) {
@@ -192,7 +207,7 @@ async function createFolder(req: Request, res: Response, next: NextFunction) {
 export default {
   uploadFile,
   getAllFiles,
-  getFSItems,
+  getFileSystemMetadata,
   getRootFolder,
   getChildren,
   getCreateFolderPage,

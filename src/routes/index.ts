@@ -26,7 +26,7 @@ if (process.env.NODE_ENV === 'development') {
   router.get('/files/all/', fileController.getAllFiles);
 }
 
-router.get('/files/:id/', fileController.getFSItems);
+router.get('/files/:id/', fileController.getFileSystemMetadata);
 
 // Form for creating subfolder
 router.get('/files/:id/create', fileController.getCreateFolderPage);

@@ -6,6 +6,12 @@ import fileController from 'controllers/fileController';
 const router = Router();
 
 /**
+ * ------------------ MIDDLEWARE ------------------------
+ * Require login for all /files routes
+ */
+router.use('/files', authController.checkLogin);
+
+/**
  * ------------------ GET ROUTES ------------------------
  */
 router.get('/', async (req, res) => {
